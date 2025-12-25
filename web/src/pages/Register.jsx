@@ -204,7 +204,7 @@ export default function Register() {
             <span>Full name</span>
             <input
               className="input"
-              placeholder="Jordan Okafor"
+              placeholder="John Doe"
               value={name}
               onChange={(e) => setName(e.target.value)}
               disabled={isLoading}
