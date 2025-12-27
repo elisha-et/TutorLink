@@ -29,8 +29,36 @@ export default function Home() {
   };
 
   // Show dashboard for logged-in users
+  // Wait for role to be loaded before showing dashboard
   if (!loading && user) {
-    const isTutor = user.role === "tutor";
+    // Check both activeRole and role, and ensure at least one is set
+    const userRole = user.activeRole || user.role;
+    
+    // If role hasn't loaded yet, show loading state
+    if (!userRole && user.id) {
+      return (
+        <div className="page-shell">
+          <div style={{ textAlign: "center", padding: "60px 24px" }}>
+            <svg
+              width="48"
+              height="48"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="var(--accent)"
+              strokeWidth="2"
+              style={{ margin: "0 auto 16px", animation: "spin 1s linear infinite" }}
+            >
+              <circle cx="12" cy="12" r="10" opacity="0.25" />
+              <path d="M12 2a10 10 0 0 1 10 10" />
+            </svg>
+            <p style={{ color: "var(--muted)", fontSize: "15px" }}>Loading your dashboard...</p>
+            <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
+          </div>
+        </div>
+      );
+    }
+    
+    const isTutor = userRole === "tutor";
     return (
       <div className="page-shell">
         <div className="page-header">

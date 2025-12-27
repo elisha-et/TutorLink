@@ -19,12 +19,26 @@ export default function Register() {
   const [err, setErr] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  // Redirect if already logged in
+  // Redirect if already logged in (wait for role to be loaded)
   useEffect(() => {
     if (!loading && user) {
-      // Redirect to role-appropriate dashboard
-      const redirectTo = user.activeRole === "tutor" ? "/tutor/profile" : "/student/profile";
-      nav(redirectTo, { replace: true });
+      // Wait for role to be loaded before redirecting
+      const userRole = user.activeRole || user.role;
+      if (userRole) {
+        // Role is loaded, safe to redirect
+        nav("/", { replace: true });
+        return;
+      }
+      
+      // If role is not loaded yet, set up a timeout fallback
+      // This ensures users aren't stuck if profile fails to load
+      const timeoutId = setTimeout(() => {
+        // Redirect anyway after 3 seconds - Home.jsx will handle loading state
+        nav("/", { replace: true });
+      }, 3000);
+      
+      // Cleanup timeout if component unmounts or user updates
+      return () => clearTimeout(timeoutId);
     }
   }, [user, loading, nav]);
 

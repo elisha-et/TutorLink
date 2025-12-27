@@ -40,12 +40,11 @@ export default function RoleSwitcher() {
       await switchRole(newRole);
       setIsOpen(false);
       
-      // Navigate to the appropriate dashboard/profile for the new role
-      if (newRole === "tutor") {
-        navigate("/tutor/profile");
-      } else {
-        navigate("/student/profile");
-      }
+      // Wait a moment for state to update, then navigate to dashboard
+      // This ensures Home.jsx receives the updated role
+      setTimeout(() => {
+        navigate("/");
+      }, 100);
     } catch (err) {
       console.error("Failed to switch role:", err);
     } finally {

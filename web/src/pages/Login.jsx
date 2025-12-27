@@ -12,12 +12,28 @@ export default function Login() {
   const loc = useLocation();
   const from = loc.state?.from?.pathname || "/";
 
-  // Redirect if already logged in
+  // Redirect if already logged in (wait for role to be loaded)
   useEffect(() => {
     if (!loading && user) {
-      // Redirect to role-appropriate dashboard or the page they were trying to access
-      const redirectTo = from !== "/" ? from : (user.role === "tutor" ? "/tutor/profile" : "/student/profile");
-      nav(redirectTo, { replace: true });
+      // Wait for role to be loaded before redirecting
+      const userRole = user.activeRole || user.role;
+      if (userRole) {
+        // Role is loaded, safe to redirect
+        const redirectTo = from !== "/" ? from : "/";
+        nav(redirectTo, { replace: true });
+        return;
+      }
+      
+      // If role is not loaded yet, set up a timeout fallback
+      // This ensures users aren't stuck if profile fails to load
+      const timeoutId = setTimeout(() => {
+        // Redirect anyway after 3 seconds - Home.jsx will handle loading state
+        const redirectTo = from !== "/" ? from : "/";
+        nav(redirectTo, { replace: true });
+      }, 3000);
+      
+      // Cleanup timeout if component unmounts or user updates
+      return () => clearTimeout(timeoutId);
     }
   }, [user, loading, nav, from]);
 
@@ -53,14 +69,8 @@ export default function Login() {
     setIsLoading(true);
     try {
       await login(email, password);
-      // Wait a moment for auth state to update and user profile to load
-      // The onAuthStateChange listener will handle setting the user
-      setTimeout(() => {
-        // Redirect will happen via useEffect when user is loaded
-        // But also try direct redirect as fallback
-        const redirectTo = from !== "/" ? from : (user?.role === "tutor" ? "/tutor/profile" : "/student/profile");
-        nav(redirectTo || "/", { replace: true });
-      }, 1000);
+      // Don't redirect here - let useEffect handle it after role is loaded
+      // The onAuthStateChange listener will load the profile and update user
     } catch (e) {
       // Handle specific error messages
       const errorMsg = e?.message || "Login failed";

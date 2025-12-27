@@ -219,43 +219,6 @@ export default function TutorDetail() {
           </div>
         )}
 
-        {/* Scheduling Link */}
-        {tutor.scheduling_link && (
-          <div style={{ marginBottom: "24px" }}>
-            <h3 style={{ margin: "0 0 12px", fontSize: "16px", fontWeight: 700 }}>
-              Book a Session
-            </h3>
-            <a
-              href={tutor.scheduling_link}
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "8px",
-                padding: "10px 16px",
-                borderRadius: "8px",
-                background: "var(--accent)",
-                color: "white",
-                textDecoration: "none",
-                fontSize: "14px",
-                fontWeight: 500,
-                transition: "opacity 0.2s",
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.9")}
-              onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-                <line x1="16" y1="2" x2="16" y2="6" />
-                <line x1="8" y1="2" x2="8" y2="6" />
-                <line x1="3" y1="10" x2="21" y2="10" />
-              </svg>
-              Schedule with {tutor.name}
-            </a>
-          </div>
-        )}
-
         {/* Verification Status */}
         {tutor.transcript_verification_status && (
           <div
